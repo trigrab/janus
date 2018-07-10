@@ -113,10 +113,11 @@ class ProfileView(ProtectedResourceView):
     @staticmethod
     def _replace_json_ids(json_data, token):
         replace = ApplicationExtension.objects.get(application=token.application)
-        replace_data = json.loads(replace.profile_replace_json)
-        for key, value in replace_data.items():
-            if key in json_data:
-                json_data[value] = json_data.pop(key)
+        if replace.profile_replace_json is not None:
+            replace_data = json.loads(replace.profile_replace_json)
+            for key, value in replace_data.items():
+                if key in json_data:
+                    json_data[value] = json_data.pop(key)
         return json_data
 
 
