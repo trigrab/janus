@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from oauth2_provider.models import Application
+
+import json
 
 
 class Profile(models.Model):
@@ -82,3 +85,10 @@ class ApplicationExtension(models.Model):
     email_required = models.BooleanField(default=False)
     display_name = models.CharField(max_length=255, null=True, blank=True, default=None)
     link = models.URLField(default=None, blank=True, null=True)
+    profile_replace_json = models.TextField(null=True, blank=True, default=None)
+
+    def clean(self):
+        try:
+            json.loads(self.profile_replace_json)
+        except ValueError:
+            raise ValidationError("profile replace json: Must be valid json")
