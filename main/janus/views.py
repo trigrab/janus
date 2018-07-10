@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
 from oauth2_provider.exceptions import OAuthToolkitError
@@ -112,7 +113,10 @@ class ProfileView(ProtectedResourceView):
 
     @staticmethod
     def _replace_json_ids(json_data, token):
-        replace = ApplicationExtension.objects.get(application=token.application)
+        try:
+            replace = ApplicationExtension.objects.get(application=token.application)
+        except ObjectDoesNotExist:
+            return json_data
         if replace.profile_replace_json is not None:
             replace_data = json.loads(replace.profile_replace_json)
             for key, value in replace_data.items():
