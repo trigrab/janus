@@ -88,7 +88,8 @@ class ApplicationExtension(models.Model):
     profile_replace_json = models.TextField(null=True, blank=True, default=None)
 
     def clean(self):
-        try:
-            json.loads(self.profile_replace_json)
-        except ValueError:
-            raise ValidationError("profile replace json: Must be valid json")
+        if self.profile_replace_json is not None:
+            try:
+                json.loads(self.profile_replace_json)
+            except ValueError:
+                raise ValidationError("profile replace json: Must be valid json")
